@@ -1,137 +1,123 @@
 import Link from 'next/link';
-import { getComposers, getProgrammeNotes, getArticles } from '@/lib/data';
+import { getComposers, getProgrammeNotes, getArticles, getConcertArchive } from '@/lib/data';
 
-export const metadata = {
-  title: 'Education Hub',
-  description: 'Explore the world of chamber music through our composer database, programme notes, and educational articles.',
-};
+export const metadata = { title: 'Education Hub' };
 
 export default async function HubPage() {
-  const [composers, notes, articles] = await Promise.all([
-    getComposers(), getProgrammeNotes(), getArticles(),
+  const [composers, notes, articles, archive] = await Promise.all([
+    getComposers(), getProgrammeNotes(), getArticles(), getConcertArchive(),
   ]);
-
-  const featured = composers.slice(0, 4);
-  const latestNote = notes[0];
 
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative pt-24 pb-32 px-6 overflow-hidden">
-        {/* Decorative amber glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--color-amber)]/5 rounded-full blur-[120px] pointer-events-none" />
-
+      {/* Hero */}
+      <section className="relative pt-20 pb-28 px-6 overflow-hidden">
+        <div className="burst bg-[var(--burst-lavender)] w-[500px] h-[500px] top-[-50px] -left-[100px]" />
+        <div className="burst bg-[var(--burst-peach)] w-[400px] h-[400px] bottom-0 right-[-80px]" />
         <div className="max-w-4xl mx-auto text-center relative">
-          <p className="text-[var(--color-amber)] text-xs font-semibold tracking-[0.4em] uppercase mb-6">
+          <p className="text-[var(--accent-text)] text-xs font-semibold tracking-[0.4em] uppercase mb-6">
             Edinburgh University Chamber Orchestra
           </p>
-          <h1 className="font-['Playfair_Display'] text-5xl md:text-7xl font-medium text-[var(--color-cream)] leading-[1.1] mb-8">
-            Education<br />
-            <span className="italic text-[var(--color-amber-light)]">Hub</span>
+          <h1 className="text-5xl md:text-7xl text-[var(--ink)] leading-[1.1] mb-8">
+            Education<br /><em className="text-[var(--accent)]">Hub</em>
           </h1>
-          <p className="text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--ink-light)] leading-relaxed max-w-2xl mx-auto">
             An ever-growing collection of resources about the music we love &mdash;
-            from composer biographies to programme notes and the history of the chamber orchestra.
+            from composer biographies to our full concert archive.
           </p>
         </div>
       </section>
 
-      {/* ── Section Grid ─────────────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Cards */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          {/* Composers Card */}
+          {/* Archive - full width */}
+          <Link href="/archive"
+            className="group relative p-8 md:p-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-500 md:col-span-2">
+            <div className="burst bg-[var(--burst-mint)] w-[300px] h-[300px] -top-[80px] -right-[80px] opacity-40" />
+            <div className="flex flex-col md:flex-row md:items-center gap-6 relative">
+              <div className="flex-grow">
+                <p className="text-[var(--accent-text)] text-xs font-bold tracking-[0.3em] uppercase mb-3">New</p>
+                <h2 className="text-3xl text-[var(--ink)] mb-3">Concert Archive</h2>
+                <p className="text-[var(--ink-muted)] leading-relaxed">
+                  Browse {archive.length} past performances with programmes, notes, and gallery photos.
+                </p>
+              </div>
+              <span className="text-[var(--ink-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all text-xl">→</span>
+            </div>
+          </Link>
+
+          {/* Composers */}
           <Link href="/composers"
-            className="group relative p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-amber-dim)] transition-all duration-500 overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--color-amber)]/5 rounded-full blur-[80px] group-hover:bg-[var(--color-amber)]/10 transition-all duration-700" />
-            <p className="text-[var(--color-amber)] text-xs font-bold tracking-[0.3em] uppercase mb-4 relative">
-              Database
+            className="group relative p-8 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-500">
+            <p className="text-[var(--accent-text)] text-xs font-bold tracking-[0.3em] uppercase mb-3">Database</p>
+            <h2 className="text-2xl text-[var(--ink)] mb-2">Composers</h2>
+            <p className="text-[var(--ink-muted)] text-sm leading-relaxed mb-5">
+              {composers.length} composers whose music has graced our concerts.
             </p>
-            <h2 className="font-['Playfair_Display'] text-3xl text-[var(--color-cream)] mb-3 relative">
-              Composers
-            </h2>
-            <p className="text-[var(--color-text-muted)] leading-relaxed mb-6 relative">
-              Explore the lives, works, and legacies of {composers.length} composers
-              whose music has graced our concerts.
-            </p>
-            <div className="flex -space-x-2 relative">
-              {featured.map(c => (
-                <div key={c.id} className="w-10 h-10 rounded-full bg-[var(--color-border)] border-2 border-[var(--color-card)] overflow-hidden">
-                  <img src={`/${c.imageUrl}`} alt={c.name} className="w-full h-full object-cover" loading="lazy" />
+            <div className="flex -space-x-2">
+              {composers.slice(0, 4).map(c => (
+                <div key={c.id} className="w-9 h-9 rounded-full bg-[var(--bg-warm)] border-2 border-[var(--bg-card)] overflow-hidden">
+                  <img src={`/${c.imageUrl}`} alt="" className="w-full h-full object-cover" loading="lazy" />
                 </div>
               ))}
-              <div className="w-10 h-10 rounded-full bg-[var(--color-parchment)] border-2 border-[var(--color-card)] flex items-center justify-center text-xs text-[var(--color-text-muted)]">
+              <div className="w-9 h-9 rounded-full bg-[var(--bg-warm)] border-2 border-[var(--bg-card)] flex items-center justify-center text-[10px] text-[var(--ink-muted)]">
                 +{composers.length - 4}
               </div>
             </div>
-            <span className="absolute bottom-8 right-8 text-[var(--color-amber-dim)] group-hover:text-[var(--color-amber)] group-hover:translate-x-1 transition-all text-xl">→</span>
+            <span className="absolute bottom-8 right-8 text-[var(--ink-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all text-xl">→</span>
           </Link>
 
-          {/* Programme Notes Card */}
+          {/* Programme Notes */}
           <Link href="/programme-notes"
-            className="group relative p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-amber-dim)] transition-all duration-500 overflow-hidden">
-            <p className="text-[var(--color-amber)] text-xs font-bold tracking-[0.3em] uppercase mb-4">
-              Archive
+            className="group relative p-8 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-500">
+            <p className="text-[var(--accent-text)] text-xs font-bold tracking-[0.3em] uppercase mb-3">Archive</p>
+            <h2 className="text-2xl text-[var(--ink)] mb-2">Programme Notes</h2>
+            <p className="text-[var(--ink-muted)] text-sm leading-relaxed mb-4">
+              Insights into the works we perform.
             </p>
-            <h2 className="font-['Playfair_Display'] text-3xl text-[var(--color-cream)] mb-3">
-              Programme Notes
-            </h2>
-            <p className="text-[var(--color-text-muted)] leading-relaxed mb-6">
-              Read insights into the works we perform, written by our members and conductors.
-            </p>
-            {latestNote && (
-              <div className="p-4 rounded-lg bg-[var(--color-parchment)] border border-[var(--color-border)]">
-                <p className="text-xs text-[var(--color-amber-dim)] mb-1">Latest</p>
-                <p className="text-sm text-[var(--color-cream)] font-medium line-clamp-1">{latestNote.title}</p>
-                <p className="text-xs text-[var(--color-text-muted)] mt-1">by {latestNote.author}</p>
+            {notes[0] && (
+              <div className="p-3 rounded-lg bg-[var(--bg-warm)] border border-[var(--border)]">
+                <p className="text-[10px] text-[var(--accent-text)] mb-1">Latest</p>
+                <p className="text-sm text-[var(--ink)] font-medium line-clamp-1">{notes[0].title}</p>
               </div>
             )}
-            <span className="absolute bottom-8 right-8 text-[var(--color-amber-dim)] group-hover:text-[var(--color-amber)] group-hover:translate-x-1 transition-all text-xl">→</span>
+            <span className="absolute bottom-8 right-8 text-[var(--ink-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all text-xl">→</span>
           </Link>
 
-          {/* Articles Card */}
+          {/* Articles */}
           <Link href="/articles"
-            className="group relative p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-amber-dim)] transition-all duration-500">
-            <p className="text-[var(--color-amber)] text-xs font-bold tracking-[0.3em] uppercase mb-4">
-              In Depth
+            className="group relative p-8 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-500">
+            <p className="text-[var(--accent-text)] text-xs font-bold tracking-[0.3em] uppercase mb-3">In depth</p>
+            <h2 className="text-2xl text-[var(--ink)] mb-2">Articles</h2>
+            <p className="text-[var(--ink-muted)] text-sm leading-relaxed">
+              Deep dives into specific works and the stories behind the notes.
             </p>
-            <h2 className="font-['Playfair_Display'] text-3xl text-[var(--color-cream)] mb-3">
-              Articles
-            </h2>
-            <p className="text-[var(--color-text-muted)] leading-relaxed">
-              Deep dives into specific works, musical topics, and the stories behind the notes.
-            </p>
-            <span className="absolute bottom-8 right-8 text-[var(--color-amber-dim)] group-hover:text-[var(--color-amber)] group-hover:translate-x-1 transition-all text-xl">→</span>
+            <span className="absolute bottom-8 right-8 text-[var(--ink-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all text-xl">→</span>
           </Link>
 
-          {/* Learn Card */}
+          {/* Learn */}
           <Link href="/learn"
-            className="group relative p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-amber-dim)] transition-all duration-500">
-            <p className="text-[var(--color-amber)] text-xs font-bold tracking-[0.3em] uppercase mb-4">
-              Discover
+            className="group relative p-8 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-500">
+            <p className="text-[var(--accent-text)] text-xs font-bold tracking-[0.3em] uppercase mb-3">Discover</p>
+            <h2 className="text-2xl text-[var(--ink)] mb-2">The Chamber Orchestra</h2>
+            <p className="text-[var(--ink-muted)] text-sm leading-relaxed">
+              What makes it unique? The instruments, the history, the art.
             </p>
-            <h2 className="font-['Playfair_Display'] text-3xl text-[var(--color-cream)] mb-3">
-              The Chamber Orchestra
-            </h2>
-            <p className="text-[var(--color-text-muted)] leading-relaxed">
-              What makes a chamber orchestra unique? Discover the instruments, the history, and the art of ensemble playing.
-            </p>
-            <span className="absolute bottom-8 right-8 text-[var(--color-amber-dim)] group-hover:text-[var(--color-amber)] group-hover:translate-x-1 transition-all text-xl">→</span>
+            <span className="absolute bottom-8 right-8 text-[var(--ink-muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all text-xl">→</span>
           </Link>
-
         </div>
       </section>
 
-      {/* ── Quote / Atmosphere ────────────────────────────────────────────── */}
-      <section className="border-t border-b border-[var(--color-border)] py-24 px-6">
+      {/* Quote */}
+      <section className="border-t border-b border-[var(--border)] py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="font-['Playfair_Display'] text-6xl text-[var(--color-amber)]/30 leading-none">&ldquo;</span>
-          <p className="font-['Playfair_Display'] text-2xl md:text-3xl italic text-[var(--color-cream)] leading-relaxed -mt-6">
+          <span className="text-6xl text-[var(--accent)]/20 leading-none font-['DM_Serif_Display']">&ldquo;</span>
+          <p className="text-2xl md:text-3xl italic text-[var(--ink)] leading-relaxed -mt-6 font-['DM_Serif_Display']">
             Music is the shorthand of emotion.
           </p>
-          <p className="text-[var(--color-text-muted)] mt-6 text-sm tracking-widest uppercase">
-            Leo Tolstoy
-          </p>
+          <p className="text-[var(--ink-muted)] mt-6 text-sm tracking-widest uppercase">Leo Tolstoy</p>
         </div>
       </section>
     </>

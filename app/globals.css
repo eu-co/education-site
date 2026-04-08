@@ -1,42 +1,43 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 :root {
-  --color-cream: #F5F0E8;
-  --color-warm-black: #0D0B08;
-  --color-amber: #C8943E;
-  --color-amber-light: #E8C882;
-  --color-amber-dim: #8B6B2E;
-  --color-parchment: #1A1712;
-  --color-card: #151210;
-  --color-border: #2A2520;
-  --color-text-muted: #8A8278;
+  --ink: #1A1A1A;
+  --ink-light: #4A4A4A;
+  --ink-muted: #8E8E8E;
+  --bg: #FAFAF8;
+  --bg-warm: #F5F3EF;
+  --bg-card: #FFFFFF;
+  --border: #E8E5DF;
+  --accent: #7C5CE0;
+  --accent-soft: #F0ECFB;
+  --accent-text: #5B3DBF;
+
+  --burst-rose: #F9E4E4;
+  --burst-lavender: #EDE4F9;
+  --burst-sky: #E0EFF9;
+  --burst-peach: #FCEEE4;
+  --burst-mint: #E4F5EE;
 }
 
 body {
-  font-family: 'Source Sans 3', 'Georgia', serif;
-  background: var(--color-warm-black);
-  color: var(--color-cream);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-weight: 400;
 }
 
-/* Subtle grain overlay on body */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+::selection {
+  background: var(--burst-lavender);
 }
 
-/* Smooth accordion */
 .accordion-content {
   display: grid;
   grid-template-rows: 0fr;
@@ -49,13 +50,73 @@ body::before {
   overflow: hidden;
 }
 
-/* Selection color */
-::selection {
-  background: rgba(200, 148, 62, 0.3);
-  color: var(--color-cream);
+.burst {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
-/* Scrollbar */
+/* Fix z-index issues with Leaflet in Next.js */
+.leaflet-container {
+  z-index: 0;
+}
+
+/* Make Leaflet popups rounded and modern */
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  padding: 0.5rem !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Hide the default close button as our styling is cleaner */
+.leaflet-popup-close-button {
+  display: none !important;
+}
+
+
+/* Full-page menu */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.menu-overlay a {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  color: var(--ink);
+  text-decoration: none;
+  padding: 0.3em 0;
+  transition: color 0.2s, transform 0.2s;
+  display: block;
+}
+.menu-overlay a:hover {
+  color: var(--accent);
+  transform: translateX(8px);
+}
+body.menu-open { overflow: hidden; }
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  button, a { min-height: 44px; }
+}
