@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { getComposers, getProgrammeNotes, getArticles, getConcertArchive } from '@/lib/data';
+import { getComposers, getArticles, getConcertArchive } from '@/lib/data';
 
 export const metadata = { title: 'Education Hub' };
 
 export default async function HubPage() {
-  const [composers, notes, articles, archive] = await Promise.all([
-    getComposers(), getProgrammeNotes(), getArticles(), getConcertArchive(),
+  const [composers, notes, archive] = await Promise.all([
+    getComposers(), getArticles(), getConcertArchive(),
   ]);
 
   return (

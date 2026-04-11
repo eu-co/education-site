@@ -198,7 +198,7 @@ export default async function ArchivePage() {
                     return (
                       <Link 
                         key={i} 
-                        href={`/archive/${c.slug}`}
+                        href={c.customRoute || `/archive/${c.slug}`}
                         className="group relative block aspect-[3/4] overflow-hidden rounded-2xl bg-gray-900 shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:-translate-y-4 hover:shadow-[0_30px_60px_rgba(236,72,153,0.3)]"
                       >
                         {/* Full Card Image */}

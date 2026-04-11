@@ -5,24 +5,38 @@ import { useState, useRef, useEffect, useCallback, createContext, useContext } f
 // ---------------------------------------------------------------------------
 // Load pdf.js from CDN (avoids webpack bundling issues with pdfjs-dist)
 // ---------------------------------------------------------------------------
-const PDFJS_VERSION = '4.4.168';
-const PDFJS_CDN = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build`;
+//const PDFJS_VERSION = '4.4.168';
+// Use pdf.js 3.x UMD build — loads via plain <script>, sets window.pdfjsLib, zero webpack involvement
+const PDFJS_VERSION = '3.11.174';
 
 function usePdfJs() {
   const [pdfjsLib, setPdfjsLib] = useState(null);
 
   useEffect(() => {
     if (window.pdfjsLib) {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = `${PDFJS_CDN}/pdf.worker.min.mjs`;
       setPdfjsLib(window.pdfjsLib);
       return;
     }
-    import(`${PDFJS_CDN}/pdf.min.mjs`).then(lib => {
-      const pdfjs = lib.default || lib;
-      pdfjs.GlobalWorkerOptions.workerSrc = `${PDFJS_CDN}/pdf.worker.min.mjs`;
-      window.pdfjsLib = pdfjs;
-      setPdfjsLib(pdfjs);
-    }).catch(console.error);
+
+    const onReady = () => setPdfjsLib(window.pdfjsLib);
+    window.addEventListener('pdfjsReady', onReady);
+
+    if (!document.getElementById('pdfjs-loader')) {
+      const base = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + PDFJS_VERSION;
+
+      const script = document.createElement('script');
+      script.id = 'pdfjs-loader';
+      script.src = base + '/pdf.min.js';
+      script.onload = () => {
+        if (window.pdfjsLib) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = base + '/pdf.worker.min.js';
+          window.dispatchEvent(new Event('pdfjsReady'));
+        }
+      };
+      document.head.appendChild(script);
+    }
+
+    return () => window.removeEventListener('pdfjsReady', onReady);
   }, []);
 
   return pdfjsLib;
@@ -112,7 +126,7 @@ function CoverHero({ title }) {
 // ---------------------------------------------------------------------------
 // Content page — renders to canvas, fills full width, no boxing
 // ---------------------------------------------------------------------------
-function PdfPage({ pageNum }) {
+function PdfPage({ pageNum, onBgDetected }) {
   const { pdfDoc } = usePdfDoc();
   const canvasRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -127,7 +141,6 @@ function PdfPage({ pageNum }) {
       const containerWidth = wrapperRef.current.clientWidth;
 
       const unscaled = page.getViewport({ scale: 1 });
-      // Render at 2x the container width for retina sharpness
       const scale = (containerWidth * 2) / unscaled.width;
       const viewport = page.getViewport({ scale });
 
@@ -137,7 +150,15 @@ function PdfPage({ pageNum }) {
       canvas.height = viewport.height;
 
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      if (!cancelled) setLoading(false);
+      if (!cancelled) {
+        setLoading(false);
+        // Sample corner pixel to detect PDF background color
+        if (onBgDetected) {
+          const ctx = canvas.getContext('2d');
+          const [r, g, b] = ctx.getImageData(4, 4, 1, 1).data;
+          onBgDetected(`rgb(${r},${g},${b})`);
+        }
+      }
     })();
 
     return () => { cancelled = true; };
@@ -145,9 +166,9 @@ function PdfPage({ pageNum }) {
 
   // A5 ratio: 1 : 1.414
   return (
-    <div ref={wrapperRef} className="w-full bg-white">
+    <div ref={wrapperRef} className="w-full" style={{ backgroundColor: 'inherit' }}>
       {loading && (
-        <div className="w-full bg-white animate-pulse" style={{ aspectRatio: '1 / 1.414' }} />
+        <div className="w-full animate-pulse" style={{ aspectRatio: '1 / 1.414', backgroundColor: 'inherit' }} />
       )}
       <canvas
         ref={canvasRef}
@@ -182,6 +203,7 @@ export default function ProgrammeReaderInner({ pdfUrl, title }) {
 
 function ReaderContent({ title, pdfUrl, proxiedUrl, pdfjsLib }) {
   const { pdfDoc, error } = usePdfDoc();
+  const [bgColor, setBgColor] = useState('#ffffff');
 
   if (error) {
     return (
@@ -210,7 +232,7 @@ function ReaderContent({ title, pdfUrl, proxiedUrl, pdfjsLib }) {
       <CoverHero title={title} />
 
       {numPages > 1 && (
-        <div className="w-full bg-white">
+        <div className="w-full" style={{ backgroundColor: bgColor }}>
           {/* Title */}
           <div className="text-center py-10">
             <h2 className="text-3xl md:text-4xl text-[var(--ink)] mb-4">{title}</h2>
@@ -220,7 +242,11 @@ function ReaderContent({ title, pdfUrl, proxiedUrl, pdfjsLib }) {
           {/* Pages — continuous, full-width, no gaps, no borders */}
           <div className="w-full max-w-[750px] mx-auto">
             {Array.from({ length: numPages - 1 }, (_, idx) => (
-              <PdfPage key={idx + 2} pageNum={idx + 2} />
+              <PdfPage
+                key={idx + 2}
+                pageNum={idx + 2}
+                onBgDetected={idx === 0 ? setBgColor : undefined}
+              />
             ))}
           </div>
 
