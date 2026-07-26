@@ -1,0 +1,36 @@
+/**
+ * Visually matched to euco-site (the main Astro app) so the two feel like
+ * one brand even though they're separately deployed: same Geom heading
+ * font, same dark theme, same blue accent.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Geom:wght@300;400;500;600;700;800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Geom", "Raleway", system-ui, sans-serif;
+  --font-sans: "Raleway", "Segoe UI", system-ui, sans-serif;
+  --color-euco-blue: #3ab3ff;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: black;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Accordion pattern, ported from the main site's tokens.css (originally
+   from the live CRA app's App.css) — used by the composer database. */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.faq-answer.open {
+  max-height: 60rem;
+}

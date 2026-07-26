@@ -1,0 +1,40 @@
+name: Build and deploy education app
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        # Fast correctness check only — the build that ships happens again
+        # inside Docker on the server (see the deploy job), so the two
+        # environments can't drift apart.
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Pull latest and rebuild the education container on the droplet
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            cd ${{ secrets.EUCO_EDUCATION_PATH }}
+            git pull origin main
+            cd ${{ secrets.EUCO_COMPOSE_DIR }}
+            docker compose build education
+            docker compose up -d education
