@@ -18,8 +18,8 @@ export default function Header() {
     <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b-2 border-ink/5 shadow-sm">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between gap-6">
         <a href={MAIN_SITE_URL} className="flex items-center gap-2 shrink-0 group" aria-label="Back to eu-co.co.uk">
-          <span className="h-9 w-9 text-ink group-hover:text-pop-coral transition-colors [&>svg]:h-full [&>svg]:w-full">
-            <InlineSvg name="euco-logo" />
+          <span className="h-9 w-9 text-ink group-hover:text-pop-coral transition-colors block">
+            <InlineSvg name="euco-logo" className="block h-full w-full [&>svg]:h-full [&>svg]:w-full" />
           </span>
           <span className="hidden sm:inline text-xs text-ink-soft font-semibold">&larr; eu-co.co.uk</span>
         </a>
