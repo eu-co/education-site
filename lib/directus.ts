@@ -53,6 +53,33 @@ export interface BlogPost {
   category?: string;
 }
 
+export interface Composer {
+  id: number;
+  name: string;
+  lifespan?: string;
+  image?: string | null;
+  bio?: string;
+  pieces?: string;
+}
+
+export interface ProgrammeNoteArticle {
+  id: number;
+  title: string;
+  concert_date?: string;
+  author?: string;
+  excerpt?: string;
+}
+
+export interface Article {
+  id: number;
+  title: string;
+  author?: string;
+  date?: string;
+  excerpt?: string;
+  youtube_url?: string;
+  spotify_embed_url?: string;
+}
+
 async function fetchCollection<T>(collection: string, query = ""): Promise<T[]> {
   try {
     const res = await fetch(
@@ -116,10 +143,33 @@ export async function getArchiveConcertBySlug(slug: string): Promise<Concert | n
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const data = await fetchCollection<BlogPost>("blog_posts", "&sort=-date");
-  return data;
+  // Same defensive pattern as concerts: if a post was saved without a slug
+  // (easy to do by accident — Directus doesn't auto-generate one), fall
+  // back to slugifying the title rather than crashing the whole build.
+  return data.map((p) => ({
+    ...p,
+    slug: p.slug || generateSlug(p.title, p.date),
+  }));
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   const posts = await getBlogPosts();
   return posts.find((p) => p.slug === slug) || null;
+}
+
+// ── Composers, Programme Notes, Articles ────────────────────────────────
+// Migrated from the hardcoded data/education.ts into Directus so committee
+// can actually edit them — same shape the pages already expected, just a
+// different source.
+
+export async function getComposers(): Promise<Composer[]> {
+  return fetchCollection<Composer>("composers", "&sort=name");
+}
+
+export async function getProgrammeNoteArticles(): Promise<ProgrammeNoteArticle[]> {
+  return fetchCollection<ProgrammeNoteArticle>("programme_notes", "&sort=-concert_date");
+}
+
+export async function getArticles(): Promise<Article[]> {
+  return fetchCollection<Article>("articles");
 }
