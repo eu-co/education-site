@@ -11,20 +11,20 @@ import Section from "@/components/Section";
 // plain full-width image, since the scroll-linked slide-out was a minor
 // visual flourish rather than the point of the page.
 const instruments = [
-  { name: "Flute", zIndex: 1, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Flute" },
-  { name: "Viola", zIndex: 4, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Viola" },
-  { name: "Clarinet", zIndex: 2, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Clarinet" },
-  { name: "Oboe", zIndex: 1, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Oboe" },
-  { name: "Bassoon", zIndex: 1, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Bassoon" },
-  { name: "Violin", zIndex: 3, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Violin" },
-  { name: "French Horn", zIndex: 1, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=French+Horn" },
-  { name: "Double Bass", zIndex: 4, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Double+Bass" },
-  { name: "Cello", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Cello" },
-  { name: "Timpani", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Timpani" },
-  { name: "Trombone", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Trombone" },
-  { name: "Harp", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Harp" },
-  { name: "Trumpet", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Trumpet" },
-  { name: "Chamber Orchestra", zIndex: 5, img: "https://placehold.co/300x200/1a1a1a/3ab3ff?text=Chamber+Orchestra" },
+  { name: "Flute", zIndex: 1, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Flute" },
+  { name: "Viola", zIndex: 4, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Viola" },
+  { name: "Clarinet", zIndex: 2, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Clarinet" },
+  { name: "Oboe", zIndex: 1, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Oboe" },
+  { name: "Bassoon", zIndex: 1, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Bassoon" },
+  { name: "Violin", zIndex: 3, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Violin" },
+  { name: "French Horn", zIndex: 1, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=French+Horn" },
+  { name: "Double Bass", zIndex: 4, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Double+Bass" },
+  { name: "Cello", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Cello" },
+  { name: "Timpani", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Timpani" },
+  { name: "Trombone", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Trombone" },
+  { name: "Harp", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Harp" },
+  { name: "Trumpet", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Trumpet" },
+  { name: "Chamber Orchestra", zIndex: 5, img: "https://placehold.co/300x200/FF5C7A/FFFFFF?text=Chamber+Orchestra" },
 ];
 
 export default function LearnPageContent() {
@@ -69,8 +69,8 @@ export default function LearnPageContent() {
 
   return (
     <>
-      <Section title="What is a Chamber Orchestra?" className="pt-8">
-        <div className="max-w-4xl mx-auto text-center text-lg text-gray-300 leading-relaxed">
+      <Section title="What is a Chamber Orchestra?" eyebrow="Start here" accent="violet" className="pt-8">
+        <div className="max-w-4xl mx-auto text-center text-lg text-ink-soft leading-relaxed">
           <p>
             A chamber orchestra is a smaller orchestra, typically consisting of around 15 to 45 musicians. This
             smaller size allows for a more intimate and detailed performance, where each instrument&rsquo;s voice
@@ -97,19 +97,19 @@ export default function LearnPageContent() {
                 style={{ zIndex: instrument.zIndex, ...getInstrumentStyle(index) }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={instrument.img} alt={instrument.name} className="max-w-xs md:max-w-md rounded-lg shadow-2xl" />
+                <img src={instrument.img} alt={instrument.name} className="max-w-xs md:max-w-md rounded-3xl shadow-2xl border-4 border-white" />
               </div>
             ) : null
           )}
           <div className="absolute w-full h-full flex justify-center items-center" style={{ zIndex: instruments[0].zIndex }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={instruments[0].img} alt={instruments[0].name} className="max-w-xs md:max-w-md rounded-lg shadow-2xl" />
+            <img src={instruments[0].img} alt={instruments[0].name} className="max-w-xs md:max-w-md rounded-3xl shadow-2xl border-4 border-white" />
           </div>
         </div>
       </div>
 
       <Section title="Much more to come soon...">
-        <div className="max-w-4xl mx-auto text-lg text-gray-300 leading-relaxed">
+        <div className="max-w-4xl mx-auto text-lg text-ink-soft leading-relaxed">
           <p>We are working hard to improve our website right now. Stay tuned for updates!</p>
         </div>
       </Section>

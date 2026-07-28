@@ -1,22 +1,42 @@
 /**
- * Visually matched to euco-site (the main Astro app) so the two feel like
- * one brand even though they're separately deployed: same Geom heading
- * font, same dark theme, same blue accent.
+ * Deliberately a completely different visual identity from euco-site (the
+ * main Astro app) — bright, white-and-light, playful, distinct from the
+ * main site's dark navy/blue theme, per the redesign brief: this is meant
+ * to read as its own thing, not a sub-section of the main site.
+ *
+ * Fredoka (rounded, friendly display font, real variable Google Font) for
+ * headings; Plus Jakarta Sans for body copy, since Fredoka at body-text
+ * size gets hard to read fast — a common pairing pattern (playful display
+ * + clean, highly-legible body).
  */
-@import url('https://fonts.googleapis.com/css2?family=Geom:wght@300;400;500;600;700;800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
-  --font-display: "Geom", "Raleway", system-ui, sans-serif;
-  --font-sans: "Raleway", "Segoe UI", system-ui, sans-serif;
-  --color-euco-blue: #3ab3ff;
+  --font-display: "Fredoka", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+
+  /* The "bright popping colours" palette — four saturated accents used
+     per-section (composers/programme-notes/learn/articles/blog/archive
+     each get their own), all sitting on white/near-white backgrounds. */
+  --color-pop-coral: #FF5C7A;
+  --color-pop-sun: #FFC93C;
+  --color-pop-sky: #3AB0FF;
+  --color-pop-mint: #2EC4B6;
+  --color-pop-violet: #9B6DFF;
+
+  --color-ink: #1A1A2E;
+  --color-ink-soft: #4A4A5E;
+  --color-paper: #FFFFFF;
+  --color-paper-warm: #FFFBF5;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: black;
-  color: white;
+  background: var(--color-paper-warm);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -24,8 +44,8 @@ body {
   font-family: var(--font-display);
 }
 
-/* Accordion pattern, ported from the main site's tokens.css (originally
-   from the live CRA app's App.css) — used by the composer database. */
+/* Accordion pattern, kept from the previous design — same interaction,
+   restyled colours (see ComposerAccordion.tsx). */
 .faq-answer {
   max-height: 0;
   overflow: hidden;
@@ -33,4 +53,10 @@ body {
 }
 .faq-answer.open {
   max-height: 60rem;
+}
+
+/* Soft "blob" background shapes used behind hero sections — part of the
+   playful, poster-like visual language this redesign is going for. */
+.blob-shape {
+  border-radius: 68% 32% 63% 37% / 45% 48% 52% 55%;
 }

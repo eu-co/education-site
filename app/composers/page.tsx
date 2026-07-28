@@ -16,7 +16,7 @@ export default function ComposersPage() {
   });
 
   return (
-    <Section title="Composer Database" className="pt-8">
+    <Section title="Composer Database" eyebrow="Meet the composers" accent="sky" className="pt-8">
       <ComposerAccordion composers={sorted} />
     </Section>
   );
