@@ -60,6 +60,10 @@ export interface Composer {
   image?: string | null;
   bio?: string;
   pieces?: string;
+  played_by_us?: boolean;
+  wikidata_qid?: string | null;
+  mmkg_dbpedia_uri?: string | null;
+  imslp_slug?: string | null;
 }
 
 export interface ProgrammeNoteArticle {
@@ -164,6 +168,15 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 export async function getComposers(): Promise<Composer[]> {
   return fetchCollection<Composer>("composers", "&sort=name");
+}
+
+// The "played by us" list specifically -- shown in the archive section
+// as an interactive compilation with descriptions (see
+// app/archive/composers/page.tsx), separate from the full mind-map on
+// /composers which includes composers pulled in from external sources
+// too, not just EUCO's own repertoire.
+export async function getComposersPlayedByUs(): Promise<Composer[]> {
+  return fetchCollection<Composer>("composers", "&filter[played_by_us][_eq]=true&sort=name");
 }
 
 export async function getProgrammeNoteArticles(): Promise<ProgrammeNoteArticle[]> {

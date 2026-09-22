@@ -29,6 +29,12 @@ export default async function ArchivePage() {
         <p className="text-ink-soft text-lg">
           Programme notes, hand-painted posters, photos, and recordings from every EUCO concert we have on record.
         </p>
+        <Link
+          href="/archive/composers"
+          className="inline-flex items-center gap-2 mt-6 text-fresco-terracotta font-display font-semibold hover:underline"
+        >
+          Browse composers we&rsquo;ve played &rarr;
+        </Link>
       </div>
 
       {concerts.length === 0 ? (

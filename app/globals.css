@@ -1,35 +1,59 @@
 /**
- * Deliberately a completely different visual identity from euco-site (the
- * main Astro app) — bright, white-and-light, playful, distinct from the
- * main site's dark navy/blue theme, per the redesign brief: this is meant
- * to read as its own thing, not a sub-section of the main site.
+ * Renaissance-pastel redesign, replacing the previous "bright pop
+ * colours" identity (coral/sun/sky/mint/violet on white) with a palette
+ * pulled from the actual pigments Renaissance painters worked with --
+ * ultramarine (ground lapis lazuli, the most prized blue of the era),
+ * terracotta/sienna, gold ochre, fresco rose, and verdigris -- kept at
+ * high chroma ("bold... unapologetic") rather than washed-out or muted,
+ * so it reads as confident and current rather than a faded museum wall.
+ * Centred on Michelangelo/Caravaggio/Raphael specifically: warm
+ * parchment backgrounds (not stark white), a serif display face with
+ * real Renaissance/old-style character, and decorative motifs meant to
+ * carry actual period artwork once real images replace the placeholders
+ * (see /public/art/README.md).
  *
- * Fredoka (rounded, friendly display font, real variable Google Font) for
- * headings; Plus Jakarta Sans for body copy, since Fredoka at body-text
- * size gets hard to read fast — a common pairing pattern (playful display
- * + clean, highly-legible body).
+ * Same "pop-*" CSS variable NAMES kept as aliases pointing at the new
+ * values, rather than renaming every class across every component --
+ * see the alias block below. New Renaissance-specific tokens
+ * (--color-fresco-*) are additionally available for new work.
  */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-display: "Fredoka", "Plus Jakarta Sans", system-ui, sans-serif;
+  /* Fraunces: a modern serif built specifically to carry old-style/
+     humanist letterforms at expressive display sizes without tipping
+     into a stuffy "museum plaque" register -- the closest freely
+     available Google Font to what a Renaissance-themed redesign needs
+     for headings. Plus Jakarta Sans stays for body copy (legibility at
+     small sizes matters more than theme-matching there). */
+  --font-display: "Fraunces", "Plus Jakarta Sans", system-ui, serif;
   --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
 
-  /* The "bright popping colours" palette — four saturated accents used
-     per-section (composers/programme-notes/learn/articles/blog/archive
-     each get their own), all sitting on white/near-white backgrounds. */
-  --color-pop-coral: #FF5C7A;
-  --color-pop-sun: #FFC93C;
-  --color-pop-sky: #3AB0FF;
-  --color-pop-mint: #2EC4B6;
-  --color-pop-violet: #9B6DFF;
+  /* Renaissance pigment palette -- bold pastel, not muted: high
+     saturation kept, lightness raised, so these still read as
+     confident accent colours rather than dusty/washed out. */
+  --color-fresco-ultramarine: #4A6FE8;  /* ground lapis lazuli -- the era's most expensive pigment */
+  --color-fresco-terracotta: #F4795B;   /* sienna/terracotta underpainting */
+  --color-fresco-gold: #F2B33D;         /* gold leaf / ochre */
+  --color-fresco-rose: #F27C9E;         /* fresco flesh tones, Raphael's drapery pinks */
+  --color-fresco-verdigris: #4FB89B;    /* oxidised copper green, common in period backgrounds */
+  --color-fresco-plum: #8B5FBF;         /* imperial purple pigment, reserved/rare in period use */
 
-  --color-ink: #1A1A2E;
-  --color-ink-soft: #4A4A5E;
-  --color-paper: #FFFFFF;
-  --color-paper-warm: #FFFBF5;
+  /* Old aliases kept pointing at the new palette -- every existing
+     bg-pop-coral / text-pop-sky / etc class across every component
+     picks up the redesign automatically, no find-and-replace needed. */
+  --color-pop-coral: var(--color-fresco-terracotta);
+  --color-pop-sun: var(--color-fresco-gold);
+  --color-pop-sky: var(--color-fresco-ultramarine);
+  --color-pop-mint: var(--color-fresco-verdigris);
+  --color-pop-violet: var(--color-fresco-plum);
+
+  --color-ink: #2B2016;        /* warm near-black, walnut-ink brown rather than cool navy-black */
+  --color-ink-soft: #6B5D4F;
+  --color-paper: #FFFDF8;
+  --color-paper-warm: #FBF2E3; /* parchment, not stark white */
 }
 
 body {
@@ -42,10 +66,11 @@ body {
 
 .font-display {
   font-family: var(--font-display);
+  font-optical-sizing: auto;
 }
 
 /* Accordion pattern, kept from the previous design — same interaction,
-   restyled colours (see ComposerAccordion.tsx). */
+   colours now inherited from the palette above via the pop-* aliases. */
 .faq-answer {
   max-height: 0;
   overflow: hidden;
@@ -55,8 +80,25 @@ body {
   max-height: 60rem;
 }
 
-/* Soft "blob" background shapes used behind hero sections — part of the
-   playful, poster-like visual language this redesign is going for. */
+/* Soft "blob" background shapes used behind hero sections — kept from
+   the previous design; still fits a bold, poster-like visual language,
+   now filled with fresco-palette colours instead of pop-palette ones. */
 .blob-shape {
   border-radius: 68% 32% 63% 37% / 45% 48% 52% 55%;
+}
+
+/* Renaissance-motif decorative border -- a simple repeating device
+   (evokes a fresco or manuscript-page border) available for section
+   dividers/hero frames. Deliberately understated in weight so it reads
+   as a design detail, not a competing focal point. */
+.fresco-rule {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-fresco-gold) 0%,
+    var(--color-fresco-terracotta) 33%,
+    var(--color-fresco-ultramarine) 66%,
+    var(--color-fresco-verdigris) 100%
+  );
+  border-radius: 9999px;
 }
