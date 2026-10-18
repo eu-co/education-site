@@ -1,3 +1,5 @@
+cd m	
+
 # Renaissance artwork placeholders
 
 Real Michelangelo/Caravaggio/Raphael (and similar) images weren't included
