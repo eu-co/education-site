@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:   # lets the CMS "rebuild on publish" Flow start this workflow
+
+# A burst of CMS edits starts many runs; only the newest one is kept.
+concurrency:
+  group: deploy-${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -36,5 +42,5 @@ jobs:
             cd ${{ secrets.EUCO_EDUCATION_PATH }}
             git pull origin main
             cd ${{ secrets.EUCO_COMPOSE_DIR }}
-            docker compose build education
+            docker compose build --no-cache education
             docker compose up -d education
