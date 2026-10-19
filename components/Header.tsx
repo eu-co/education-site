@@ -6,7 +6,6 @@ const MAIN_SITE_URL = "https://eu-co.co.uk";
 const links = [
   { href: "/", label: "Hub", color: "text-ink" },
   { href: "/archive", label: "Archive", color: "text-pop-coral" },
-  { href: "/blog", label: "Blog", color: "text-pop-sun" },
   { href: "/composers", label: "Composers", color: "text-pop-sky" },
   { href: "/programme-notes", label: "Programme Notes", color: "text-pop-mint" },
   { href: "/learn", label: "Learn", color: "text-pop-violet" },

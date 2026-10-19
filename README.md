@@ -15,7 +15,7 @@ for this piece.
 - `/` — Education Hub (links to the four sections below)
 - `/composers` — a database of ~50 composers with biographies and key
   chamber-orchestra repertoire, in a working accordion
-- `/programme-notes` — an archive of notes from past concerts
+- `/programme-notes` — an archive of notes from past concerts. Built from the programme-notes PDF uploaded on each past concert in the CMS (Concerts -> Programme notes PDF), plus optional written essays from "Programme-note essays". See `DROP-IN/programme-notes-page.tsx.example`.
 - `/learn` — a scroll-linked explainer of chamber orchestra instrumentation
 - `/articles` — in-depth pieces (currently one, on Ravel's *Le Tombeau de
   Couperin*, with embedded YouTube/Spotify players)
@@ -66,3 +66,11 @@ that shared compose file — it only ever touches its own container.
 - `next.config.ts` sets `output: "standalone"` — required for the
   Dockerfile's small runtime image; don't remove it without also updating
   the Dockerfile.
+
+## Blog removed
+
+The education blog was removed (the `blog_posts` collection is deleted from the CMS schema, `getBlogPosts` from `lib/directus.ts`, and the Blog link from the header). If your copy of this repo still has an `app/blog` folder, delete it and remove any `/blog` entries from the sitemap:
+
+```bash
+grep -rni "blog" app components lib public 2>/dev/null | grep -v node_modules
+```

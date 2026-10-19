@@ -5,7 +5,9 @@
 // content: "concerts" is a shared collection (the main site owns the core
 // fields — Title/Date/Venue/etc — this app additionally reads the
 // archive-specific fields added on top: ProgrammeNotesPdf, PosterImage,
-// Gallery, VideoUrl, ArchiveNotes). "blog_posts" belongs to this app only.
+// Gallery, VideoUrl, ArchiveNotes). The programme-notes page is built from those
+// per-concert PDFs (see getProgrammeBooklets below), so notes are uploaded ONCE,
+// on the concert, in the CMS. There is no blog.
 //
 // This app uses Next.js's build-time fetch caching (default behaviour of
 // `fetch` in a Server Component) rather than Astro's static-only model —
@@ -38,19 +40,6 @@ export interface Concert {
   VideoUrl?: string | null;
   ArchiveNotes?: string | null;
   slug: string;
-}
-
-export interface BlogPost {
-  id: number;
-  status: string;
-  title: string;
-  slug: string;
-  date: string;
-  author?: string;
-  excerpt?: string;
-  cover_image?: string | null;
-  body?: string;
-  category?: string;
 }
 
 export interface Composer {
@@ -143,24 +132,6 @@ export async function getArchiveConcertBySlug(slug: string): Promise<Concert | n
   return all.find((c) => c.slug === slug) || null;
 }
 
-// ── Blog ─────────────────────────────────────────────────────────────────
-
-export async function getBlogPosts(): Promise<BlogPost[]> {
-  const data = await fetchCollection<BlogPost>("blog_posts", "&sort=-date");
-  // Same defensive pattern as concerts: if a post was saved without a slug
-  // (easy to do by accident — Directus doesn't auto-generate one), fall
-  // back to slugifying the title rather than crashing the whole build.
-  return data.map((p) => ({
-    ...p,
-    slug: p.slug || generateSlug(p.title, p.date),
-  }));
-}
-
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const posts = await getBlogPosts();
-  return posts.find((p) => p.slug === slug) || null;
-}
-
 // ── Composers, Programme Notes, Articles ────────────────────────────────
 // Migrated from the hardcoded data/education.ts into Directus so committee
 // can actually edit them — same shape the pages already expected, just a
@@ -179,6 +150,35 @@ export async function getComposersPlayedByUs(): Promise<Composer[]> {
   return fetchCollection<Composer>("composers", "&filter[played_by_us][_eq]=true&sort=name");
 }
 
+// One entry per past concert that has a programme-notes PDF uploaded on the
+// concert in the CMS (Concerts -> Programme notes PDF). This is the main source
+// for the /programme-notes page: upload a PDF on the concert and it appears here
+// after the next rebuild, newest first. Nothing is typed in twice.
+export interface ProgrammeBooklet {
+  slug: string;
+  title: string;
+  date: string;
+  venue?: string;
+  pdfUrl: string;
+  posterUrl?: string;
+}
+
+export async function getProgrammeBooklets(): Promise<ProgrammeBooklet[]> {
+  const concerts = await getArchiveConcerts();
+  return concerts
+    .filter((c) => Boolean(c.ProgrammeNotesPdf))
+    .map((c) => ({
+      slug: c.slug,
+      title: c.Title,
+      date: c.Date,
+      venue: c.Venue,
+      pdfUrl: getCleanImageUrl(c.ProgrammeNotesPdf),
+      posterUrl: c.PosterImage ? getCleanImageUrl(c.PosterImage) : undefined,
+    }));
+}
+
+// Optional written essays (CMS: Education hub -> Programme-note essays). Separate
+// from the per-concert PDFs above; leave empty if you only publish the PDFs.
 export async function getProgrammeNoteArticles(): Promise<ProgrammeNoteArticle[]> {
   return fetchCollection<ProgrammeNoteArticle>("programme_notes", "&sort=-concert_date");
 }
